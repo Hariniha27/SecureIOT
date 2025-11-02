@@ -1,0 +1,181 @@
+[
+    {
+        "label": "socket,",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "socket.",
+        "description": "socket.",
+        "detail": "socket.",
+        "documentation": {}
+    },
+    {
+        "label": "x25519",
+        "importPath": "cryptography.hazmat.primitives.asymmetric",
+        "description": "cryptography.hazmat.primitives.asymmetric",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives.asymmetric",
+        "documentation": {}
+    },
+    {
+        "label": "x25519",
+        "importPath": "cryptography.hazmat.primitives.asymmetric",
+        "description": "cryptography.hazmat.primitives.asymmetric",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives.asymmetric",
+        "documentation": {}
+    },
+    {
+        "label": "HKDF",
+        "importPath": "cryptography.hazmat.primitives.kdf.hkdf",
+        "description": "cryptography.hazmat.primitives.kdf.hkdf",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives.kdf.hkdf",
+        "documentation": {}
+    },
+    {
+        "label": "HKDF",
+        "importPath": "cryptography.hazmat.primitives.kdf.hkdf",
+        "description": "cryptography.hazmat.primitives.kdf.hkdf",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives.kdf.hkdf",
+        "documentation": {}
+    },
+    {
+        "label": "hashes",
+        "importPath": "cryptography.hazmat.primitives",
+        "description": "cryptography.hazmat.primitives",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives",
+        "documentation": {}
+    },
+    {
+        "label": "serialization",
+        "importPath": "cryptography.hazmat.primitives",
+        "description": "cryptography.hazmat.primitives",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives",
+        "documentation": {}
+    },
+    {
+        "label": "hashes",
+        "importPath": "cryptography.hazmat.primitives",
+        "description": "cryptography.hazmat.primitives",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives",
+        "documentation": {}
+    },
+    {
+        "label": "serialization",
+        "importPath": "cryptography.hazmat.primitives",
+        "description": "cryptography.hazmat.primitives",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives",
+        "documentation": {}
+    },
+    {
+        "label": "AESGCM",
+        "importPath": "cryptography.hazmat.primitives.ciphers.aead",
+        "description": "cryptography.hazmat.primitives.ciphers.aead",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives.ciphers.aead",
+        "documentation": {}
+    },
+    {
+        "label": "AESGCM",
+        "importPath": "cryptography.hazmat.primitives.ciphers.aead",
+        "description": "cryptography.hazmat.primitives.ciphers.aead",
+        "isExtraImport": true,
+        "detail": "cryptography.hazmat.primitives.ciphers.aead",
+        "documentation": {}
+    },
+    {
+        "label": "send_bytes",
+        "kind": 2,
+        "importPath": "device",
+        "description": "device",
+        "peekOfCode": "def send_bytes(s, b): s.sendall(struct.pack(\"!I\", len(b)) + b)\ndef recv_bytes(s):\n    hdr = s.recv(4)\n    if not hdr: return None\n    (n,) = struct.unpack(\"!I\", hdr)\n    data = b\"\"\n    while len(data) < n:\n        chunk = s.recv(n - len(data))\n        if not chunk: raise ConnectionError(\"socket closed\")\n        data += chunk",
+        "detail": "device",
+        "documentation": {}
+    },
+    {
+        "label": "recv_bytes",
+        "kind": 2,
+        "importPath": "device",
+        "description": "device",
+        "peekOfCode": "def recv_bytes(s):\n    hdr = s.recv(4)\n    if not hdr: return None\n    (n,) = struct.unpack(\"!I\", hdr)\n    data = b\"\"\n    while len(data) < n:\n        chunk = s.recv(n - len(data))\n        if not chunk: raise ConnectionError(\"socket closed\")\n        data += chunk\n    return data",
+        "detail": "device",
+        "documentation": {}
+    },
+    {
+        "label": "derive_shared_key",
+        "kind": 2,
+        "importPath": "device",
+        "description": "device",
+        "peekOfCode": "def derive_shared_key(priv, peer_pub_bytes):\n    peer_pub = x25519.X25519PublicKey.from_public_bytes(peer_pub_bytes)\n    shared = priv.exchange(peer_pub)\n    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b\"iot-secure-comm\")\n    return hkdf.derive(shared)\ndef simulate_telemetry():\n    return {\n        \"type\": \"telemetry\",\n        \"device_id\": \"device-001\",\n        \"ts\": int(time.time()),",
+        "detail": "device",
+        "documentation": {}
+    },
+    {
+        "label": "simulate_telemetry",
+        "kind": 2,
+        "importPath": "device",
+        "description": "device",
+        "peekOfCode": "def simulate_telemetry():\n    return {\n        \"type\": \"telemetry\",\n        \"device_id\": \"device-001\",\n        \"ts\": int(time.time()),\n        \"temperature\": round(20 + random.random()*10, 2),\n        \"humidity\": round(30 + random.random()*40, 2),\n        \"battery\": round(50 + random.random()*50, 2)\n    }\ndef run_device():",
+        "detail": "device",
+        "documentation": {}
+    },
+    {
+        "label": "run_device",
+        "kind": 2,
+        "importPath": "device",
+        "description": "device",
+        "peekOfCode": "def run_device():\n    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    s.connect((SERVER_HOST, SERVER_PORT))\n    server_pub = recv_bytes(s)\n    priv = x25519.X25519PrivateKey.generate()\n    pub = priv.public_key().public_bytes(\n        encoding=serialization.Encoding.Raw,\n        format=serialization.PublicFormat.Raw\n    )\n    send_bytes(s, pub)",
+        "detail": "device",
+        "documentation": {}
+    },
+    {
+        "label": "send_bytes",
+        "kind": 2,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "def send_bytes(conn, b): conn.sendall(struct.pack(\"!I\", len(b)) + b)\ndef recv_bytes(conn):\n    hdr = conn.recv(4)\n    if not hdr: return None\n    (n,) = struct.unpack(\"!I\", hdr)\n    data = b\"\"\n    while len(data) < n:\n        chunk = conn.recv(n - len(data))\n        if not chunk: raise ConnectionError(\"socket closed during recv\")\n        data += chunk",
+        "detail": "server",
+        "documentation": {}
+    },
+    {
+        "label": "recv_bytes",
+        "kind": 2,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "def recv_bytes(conn):\n    hdr = conn.recv(4)\n    if not hdr: return None\n    (n,) = struct.unpack(\"!I\", hdr)\n    data = b\"\"\n    while len(data) < n:\n        chunk = conn.recv(n - len(data))\n        if not chunk: raise ConnectionError(\"socket closed during recv\")\n        data += chunk\n    return data",
+        "detail": "server",
+        "documentation": {}
+    },
+    {
+        "label": "derive_shared_key",
+        "kind": 2,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "def derive_shared_key(priv, peer_pub_bytes):\n    peer_pub = x25519.X25519PublicKey.from_public_bytes(peer_pub_bytes)\n    shared = priv.exchange(peer_pub)\n    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b\"iot-secure-comm\")\n    return hkdf.derive(shared)\ndef handle_client(conn, addr):\n    try:\n        priv = x25519.X25519PrivateKey.generate()\n        pub = priv.public_key().public_bytes(\n            encoding=serialization.Encoding.Raw,",
+        "detail": "server",
+        "documentation": {}
+    },
+    {
+        "label": "handle_client",
+        "kind": 2,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "def handle_client(conn, addr):\n    try:\n        priv = x25519.X25519PrivateKey.generate()\n        pub = priv.public_key().public_bytes(\n            encoding=serialization.Encoding.Raw,\n            format=serialization.PublicFormat.Raw\n        )\n        send_bytes(conn, pub)\n        client_pub = recv_bytes(conn)\n        if client_pub is None: raise ConnectionError(\"client closed\")",
+        "detail": "server",
+        "documentation": {}
+    },
+    {
+        "label": "start_server",
+        "kind": 2,
+        "importPath": "server",
+        "description": "server",
+        "peekOfCode": "def start_server():\n    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    s.bind((HOST, PORT)); s.listen(5)\n    print(f\"Server running on {HOST}:{PORT}\")\n    try:\n        while True:\n            conn, addr = s.accept()\n            threading.Thread(target=handle_client, args=(conn, addr), daemon=True).start()\n    except KeyboardInterrupt:\n        print(\"Server stopped\")",
+        "detail": "server",
+        "documentation": {}
+    }
+]
